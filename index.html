@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KUMBAKARANA Food Chatbot</title>
+
+<style>
+    /* GOOGLE FONT */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+    /* RESET */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ---------- PRELOADER ---------- */
+    #preloader {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: #000000d9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        color: white;
+        font-size: 30px;
+        font-family: Poppins;
+        flex-direction: column;
+    }
+    .loader {
+        width: 80px;
+        height: 80px;
+        border: 8px solid #ffddc1;
+        border-top: 8px solid #ff5733;
+        border-radius: 50%;
+        animation: spin 1.4s linear infinite;
+        margin-bottom: 20px;
+    }
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
+
+    body {
+        font-family: Poppins, sans-serif;
+        background: radial-gradient(circle at top, #ff7e5f, #feb47b, #ff9f45);
+        overflow-x: hidden;
+        animation: bgShift 15s infinite alternate ease-in-out;
+    }
+
+    @keyframes bgShift {
+        0% { background-position: 0% 30%; }
+        100% { background-position: 100% 70%; }
+    }
+
+    /* ---------- HERO SECTION ---------- */
+    .hero {
+        text-align: center;
+        padding: 100px 20px;
+        color: white;
+        position: relative;
+    }
+
+    .hero h1 {
+        font-size: 65px;
+        font-weight: 800;
+        text-shadow: 0px 0px 20px rgba(255,255,255,0.6);
+        animation: glow 3s infinite ease-in-out;
+    }
+
+    @keyframes glow {
+        0% { text-shadow: 0 0 10px #fff; }
+        50% { text-shadow: 0 0 30px #ffe6c9; }
+        100% { text-shadow: 0 0 10px #fff; }
+    }
+
+    /* ---------- TYPING TEXT ---------- */
+    .typing {
+        font-size: 22px;
+        color: #fff9;
+        margin-top: 10px;
+        height: 40px;
+        overflow: hidden;
+        border-right: 3px solid white;
+        white-space: nowrap;
+        animation: typing 5s steps(40) infinite, blink 0.6s infinite;
+    }
+
+    @keyframes typing {
+        0% { width: 0ch; }
+        50% { width: 28ch; }
+        100% { width: 0ch; }
+    }
+
+    @keyframes blink {
+        50% { border-color: transparent; }
+    }
+
+    /* ---------- START BUTTON ---------- */
+    .start-btn {
+        margin-top: 40px;
+        background: #fff;
+        color: #ff3b2e;
+        padding: 18px 45px;
+        font-size: 24px;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: 0.35s;
+        box-shadow: 0 0 20px rgba(255,255,255,0.6);
+    }
+    .start-btn:hover {
+        transform: scale(1.12);
+        background: #ffe8dc;
+        box-shadow: 0 0 25px #fff;
+    }
+
+    /* ---------- FLOATING FOOD ITEMS ---------- */
+    .float-food {
+        position: absolute;
+        font-size: 48px;
+        animation: float 7s infinite ease-in-out;
+        opacity: 0.8;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-40px) rotate(20deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    .f1 { left: 5%; top: 20%; animation-delay: 0s; }
+    .f2 { right: 10%; top: 25%; animation-delay: 1s; }
+    .f3 { left: 20%; bottom: 10%; animation-delay: 2.2s; }
+    .f4 { right: 20%; top: 75%; animation-delay: 1.5s; }
+    .f5 { left: 50%; top: 85%; animation-delay: 3s; }
+
+    /* ---------- CHAT SECTION ---------- */
+    #chat {
+        margin-top: 140px;
+        padding: 50px;
+        text-align: center;
+    }
+
+    h2 {
+        color: white;
+        font-size: 45px;
+        margin-bottom: 20px;
+    }
+
+    .glass-box {
+        width: 80%;
+        margin: auto;
+        padding: 50px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 25px;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 0 20px rgba(255,255,255,0.35);
+        animation: fadeSlide 1.4s ease;
+    }
+
+    @keyframes fadeSlide {
+        from { opacity: 0; transform: translateY(50px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+</style>
+</head>
+
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="loader"></div>
+  Cooking your experience... 🍳
+</div>
+
+<script>
+  window.onload = function() {
+      setTimeout(() => {
+          document.getElementById("preloader").style.display = "none";
+      }, 1500);
+  };
+</script>
+
+<!-- FLOATING EMOJIS -->
+<div class="float-food f1">🍕</div>
+<div class="float-food f2">🍔</div>
+<div class="float-food f3">🍟</div>
+<div class="float-food f4">🍜</div>
+<div class="float-food f5">🥗</div>
+
+<!-- HERO CONTENT -->
+<div class="hero">
+    <h1>KUMBAKARANA FOOD ASSISTANT</h1>
+    <div class="typing">Your Personal Food Guru | Recipes | Meal Plans | Cooking Help</div>
+
+    <div class="start-btn" onclick="scrollToChat()">Start Chat 🍽️</div>
+</div>
+
+<!-- CHATBOT SECTION -->
+<div id="chat">
+    <h2>Start Talking With Your AI Food Buddy</h2>
+
+    <div class="glass-box">
+        <!-- WATSON CHATBOT EMBED -->
+        <script>
+            window.watsonAssistantChatOptions = {
+              integrationID: "e245f2fd-9ba4-419a-8400-a58adefaf91d",
+              region: "eu-de",
+              serviceInstanceID: "b4929931-b8d3-4dbc-8e96-2ac820d48d16",
+              onLoad: async (instance) => { await instance.render(); }
+            };
+            setTimeout(function(){
+              const t=document.createElement('script');
+              t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + 
+              (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+              document.head.appendChild(t);
+            });
+        </script>
+    </div>
+</div>
+
+<script>
+  function scrollToChat() {
+      document.getElementById("chat").scrollIntoView({ behavior: "smooth" });
+  }
+</script>
+
+</body>
+</html>
