@@ -3,126 +3,271 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KUMBAKARANA Food Chatbot</title>
+  <title>KUMBAKARANA Food Chatbot — Fixed Integration</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836') no-repeat center center/cover;
-      backdrop-filter: blur(4px);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-    }
+    :root{ --glass: rgba(255,255,255,0.06); --accent:#ff7a18 }
+    body { margin:0; font-family: 'Poppins', sans-serif; background: linear-gradient(180deg,#ffecd2,#fcb69f); color:#111; }
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px}
+    .container{width:95%;max-width:980px;background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.9));border-radius:18px;box-shadow:0 18px 50px rgba(10,10,10,0.12);overflow:hidden}
+    .hero{display:grid;grid-template-columns:360px 1fr;gap:24px;padding:28px}
+    .left{padding:14px}
+    h1{margin:6px 0;font-size:22px;color:#111}
+    .tag{color:#444;margin-bottom:12px}
+    .food-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .food-grid img{width:100%;height:96px;object-fit:cover;border-radius:10px;transition:transform .25s,box-shadow .25s}
+    .food-grid img:hover{transform:scale(1.06);box-shadow:0 10px 28px rgba(0,0,0,0.12)}
 
-    .container {
-      width: 85%;
-      max-width: 900px;
-      background: rgba(0, 0, 0, 0.55);
-      padding: 25px;
-      border-radius: 20px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 25px rgba(0,0,0,0.6);
-      animation: fadeIn 1.2s ease-in-out;
-    }
+    .right{padding:14px;display:flex;flex-direction:column;gap:12px}
+    .card{background:var(--glass);padding:12px;border-radius:12px;border:1px solid rgba(0,0,0,0.04)}
+    .cta{display:flex;gap:10px;align-items:center}
+    .btn{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(0,0,0,0.06)}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    /* Chat fallback modal */
+    .chat-modal{position:fixed;right:24px;bottom:24px;width:360px;max-width:calc(100% - 48px);border-radius:14px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,0.25);background:white;display:flex;flex-direction:column}
+    .chat-header{padding:12px;background:linear-gradient(90deg,var(--accent),#ffb86b);color:#081224;font-weight:700}
+    .chat-body{padding:12px;min-height:180px;max-height:420px;overflow:auto}
+    .chat-input{display:flex;border-top:1px solid rgba(0,0,0,0.06)}
+    .chat-input input{flex:1;padding:10px;border:0;outline:none;font-size:14px}
+    .chat-input button{padding:10px 12px;border:0;background:var(--accent);color:white;cursor:pointer}
+    .msg{margin:8px 0;padding:8px 10px;border-radius:10px;max-width:82%}
+    .msg.user{background:#ffefde;color:#111;margin-left:auto}
+    .msg.bot{background:#f4f6f8;color:#111}
 
-    h1 {
-      text-align: center;
-      font-size: 2.8rem;
-      margin-bottom: 10px;
-      text-shadow: 0 0 10px #ffcf33;
-      animation: glow 2s infinite alternate;
-    }
+    .hidden{display:none}
 
-    @keyframes glow {
-      from { text-shadow: 0 0 8px #ffc107; }
-      to { text-shadow: 0 0 20px #ffdf66; }
-    }
-
-    .food-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-      margin: 20px 0;
-    }
-
-    .food-grid img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 15px;
-      transition: 0.3s;
-    }
-
-    .food-grid img:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 15px #ffe27a;
-    }
-
-    .tagline {
-      text-align: center;
-      font-size: 1.3rem;
-      margin: 10px auto 25px;
-      letter-spacing: 1px;
-    }
-
-    .chatbot-box {
-      margin-top: 20px;
-      padding: 18px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.08);
-      text-align: center;
-      animation: slideUp 1.3s ease;
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @media (max-width:880px){.hero{grid-template-columns:1fr}} 
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>KUMBAKARANA Food Assistant</h1>
-    <p class="tagline">Your smart foodie buddy for recipes, cravings & meal ideas 🍲</p>
+  <div class="wrap">
+    <div class="container">
+      <div class="hero">
+        <div class="left">
+          <h1>KUMBAKARANA Food Assistant</h1>
+          <div class="tag">Beautiful, interactive landing page with a robust Watson Assistant integration and a safe fallback chat if the widget fails.</div>
 
-    <div class="food-grid">
-      <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092" alt="Burger">
-      <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c" alt="Pasta">
-      <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352" alt="Healthy Bowl">
-      <img src="https://images.unsplash.com/photo-1553621042-f6e147245754" alt="Pizza">
-      <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836" alt="Steak">
-      <img src="https://images.unsplash.com/photo-1562967914-608f82629710" alt="Indian Food">
-    </div>
+          <div class="card">
+            <div style="font-weight:700;margin-bottom:8px">Popular dishes</div>
+            <div class="food-grid">
+              <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?q=80&w=800&auto=format&fit=crop" alt="Burger">
+              <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop" alt="Pasta">
+              <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=800&auto=format&fit=crop" alt="Healthy Bowl">
+              <img src="https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=800&auto=format&fit=crop" alt="Pizza">
+            </div>
+          </div>
 
-    <div class="chatbot-box">
-      <h2>🍽 Talk to Your Food Assistant</h2>
-      <p>Ask for recipes, cooking tips, diet suggestions, or meal plans!</p>
+          <div class="card" style="margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:700">System keys</div>
+              <button class="btn ghost" onclick="downloadCSV()">Download CSV</button>
+            </div>
+            <div style="font-size:13px;color:#555;margin-top:8px">Identifiers are sanitized for strict systems (underscores only).</div>
+          </div>
+        </div>
 
-      <!-- Watson Assistant Script -->
-      <script>
-        window.watsonAssistantChatOptions = {
-          integrationID: "e245f2fd-9ba4-419a-8400-a58adefaf91d",
-          region: "eu-de",
-          serviceInstanceID: "b4929931-b8d3-4dbc-8e96-2ac820d48d16",
-          onLoad: async (instance) => { await instance.render(); }
-        };
-        setTimeout(function(){
-          const t=document.createElement('script');
-          t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" +
-            (window.watsonAssistantChatOptions.clientVersion || 'latest') +
-            "/WatsonAssistantChatEntry.js";
-          document.head.appendChild(t);
-        });
-      </script>
+        <div class="right">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:700">Talk to the bot</div>
+                <div style="font-size:13px;color:#555">Click "Open Chat" to use Watson (preferred) or fallback chat if integration fails.</div>
+              </div>
+              <div class="cta">
+                <button class="btn" id="openChatBtn">Open Chat</button>
+                <button class="btn ghost" id="helpBtn">Help</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="font-weight:700;margin-bottom:8px">Why this fix?</div>
+            <div style="font-size:13px;color:#555;line-height:1.4">
+              Some Watson integrations can throw "Failed to track events" when event-tracking functions are missing or throw errors in your environment. This page wraps event-tracking with safe guards, provides graceful error handling, and shows a functional local fallback chat so users can continue interacting.
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="font-weight:700;margin-bottom:8px">Developer notes</div>
+            <div style="font-size:13px;color:#555;line-height:1.4">
+              - Verify your <code>integrationID</code> and <code>serviceInstanceID</code> in Watson Assistant console.<br>
+              - If you see tracking errors, this page will log them and use the fallback chat. Check console for details.
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Fallback Chat Modal (hidden by default) -->
+  <div id="chatModal" class="chat-modal hidden" aria-hidden="true">
+    <div class="chat-header">KUMBAKARANA_ASSISTANT</div>
+    <div id="chatBody" class="chat-body">
+      <div class="msg bot">Hi! I'm here to help with recipes, meal plans, and food tips. Try: "What can I cook with eggs and spinach?"</div>
+    </div>
+    <div class="chat-input">
+      <input id="chatInput" placeholder="Type a message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Sanitized CSV for download ----------
+    function downloadCSV(){
+      const csv = `Content,Intent
+Greets_user_warmly,Build_rapport
+Introduces_itself_as_food_assistant,Clarify_role
+Asks_users_food_preference,Personalize_experience
+Suggests_recipes,Offer_meal_ideas
+Provides_quick_snacks,Save_user_time
+Gives_breakfast_ideas,Help_plan_meals
+Recommends_lunch_dishes,Make_selection_easy
+Suggests_dinner_options,Support_daily_food_planning
+Provides_healthy_meals,Promote_wellness
+Offers_high_protein_recipes,Support_fitness_goals
+Suggests_vegetarian_dishes,Match_diet_needs
+Gives_vegan_recipes,Support_plant_based_diets
+Provides_non_veg_dishes,Offer_variety
+Gives_sugar_free_meal_ideas,Help_diabetic_friendly_diets
+Suggests_gluten_free_recipes,Support_dietary_restrictions
+Gives_festival_food_ideas,Match_seasonal_needs
+Offers_step_by_step_cooking,Guide_beginners
+Suggests_ingredient_substitutes,Help_when_items_are_missing
+Provides_cooking_time,Manage_time_better
+Gives_calorie_info,Support_weight_management
+Provides_nutrition_breakdown,Educate_user
+Suggests_weight_loss_foods,Support_health_goals
+Suggests_weight_gain_foods,Help_build_muscle
+Offers_gym_diet_plans,Support_workouts
+Creates_weekly_meal_plan,Improve_planning
+Creates_daily_food_plan,Support_routine
+Asks_for_available_ingredients,Optimize_suggestions
+Suggests_dishes_from_ingredients,Reduce_decision_time
+Gives_Indian_cuisine_recipes,Match_regional_taste
+Offers_Italian_dishes,Expand_variety
+Suggests_Chinese_meals,Explore_cuisines
+Provides_street_food_ideas,Help_with_cravings
+Recommends_restaurants,Assist_food_outings
+Suggests_budget_meals,Save_money
+Gives_premium_dish_ideas,Provide_gourmet_options
+Provides_food_storage_tips,Reduce_waste
+Suggests_kitchen_hacks,Improve_efficiency
+Helps_with_grocery_list,Make_shopping_easy
+Suggests_cooking_tools,Assist_preparation
+Guides_microwave_cooking,Support_appliance_use
+Guides_air_fryer_cooking,Modern_cooking_help
+Encourages_user_humorously,Enhance_experience
+Mimics_Kumbakarana_food_love,Add_personality
+Remembers_user_preferences,Improve_personalization
+Avoids_disliked_ingredients,Respect_user_choices
+Handles_food_safety_questions,Promote_safe_cooking
+Answers_general_food_queries,Provide_knowledge
+Gives_festive_meal_plans,Match_celebrations
+Ends_chat_politely,Leave_positive_impression`;
+      const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'kumbakarana_content_intent.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+
+    // ---------- Small local fallback chat implementation ----------
+    const chatModal = document.getElementById('chatModal');
+    const openChatBtn = document.getElementById('openChatBtn');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatInput = document.getElementById('chatInput');
+    const chatBody = document.getElementById('chatBody');
+
+    function showChatModal(){ chatModal.classList.remove('hidden'); chatModal.setAttribute('aria-hidden','false'); chatInput.focus(); }
+    function hideChatModal(){ chatModal.classList.add('hidden'); chatModal.setAttribute('aria-hidden','true'); }
+
+    openChatBtn.addEventListener('click', async function(){
+      // If Watson is already loaded and rendered, prefer it. Otherwise show fallback.
+      if(window.__wa && typeof window.WatsonAssistantChat === 'object'){
+        // try to render the Watson widget (safe-guarded)
+        try{ if(window.WatsonAssistantChat && typeof window.WatsonAssistantChat.render === 'function'){ window.WatsonAssistantChat.render(); return; } }catch(e){ console.warn('Watson render attempt failed', e); }
+      }
+      // Show fallback local chat
+      showChatModal();
+    });
+
+    sendBtn.addEventListener('click', handleSend);
+    chatInput.addEventListener('keyup', (e)=>{ if(e.key === 'Enter') handleSend(); });
+
+    function appendMessage(text, who='bot'){
+      const d = document.createElement('div'); d.className = 'msg ' + (who==='user' ? 'user' : 'bot'); d.textContent = text; chatBody.appendChild(d); chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function handleSend(){
+      const text = chatInput.value.trim(); if(!text) return; appendMessage(text,'user'); chatInput.value='';
+      // simple canned responses to keep fallback usable
+      setTimeout(()=>{
+        const lower = text.toLowerCase();
+        if(lower.includes('egg') || lower.includes('spinach')) appendMessage('Try a spinach & feta omelette — quick, 10–12 minutes.');
+        else if(lower.includes('vegan')) appendMessage('I can plan a 7-day vegan menu. How many calories per day?');
+        else if(lower.includes('snack')) appendMessage('Try Greek yogurt with honey and nuts — tasty and quick.');
+        else appendMessage('Nice! I can help with recipes, substitutions, meal plans, and nutrition. Try: "What can I cook with tomatoes and rice?"');
+      },600);
+    }
+
+    // ---------- Watson Assistant safe integration ----------
+    // We wrap the provided Watson script loading with additional guards and a robust onLoad handler
+
+    (function loadWatsonSafely(){
+      // Configuration (keep your integration values here)
+      window.watsonAssistantChatOptions = window.watsonAssistantChatOptions || {};
+      Object.assign(window.watsonAssistantChatOptions, {
+        integrationID: 'e245f2fd-9ba4-419a-8400-a58adefaf91d',
+        region: 'eu-de',
+        serviceInstanceID: 'b4929931-b8d3-4dbc-8e96-2ac820d48d16',
+        clientVersion: window.watsonAssistantChatOptions.clientVersion || 'latest',
+        onLoad: async function(instance){
+          // Defensive wrappers to prevent "Failed to track events" crashes
+          try{
+            // Wrap common event-tracking methods if present
+            const trackers = ['trackEvent','track','sendEvent','logEvent'];
+            trackers.forEach(name=>{
+              if(instance && instance[name] && typeof instance[name] === 'function'){
+                const orig = instance[name].bind(instance);
+                instance[name] = function(){ try{ return orig.apply(null, arguments); }catch(err){ console.warn('Watson event tracker failed:', name, err); return null; } }
+              }
+            });
+
+            // Finally attempt to render
+            if(instance && typeof instance.render === 'function'){
+              await instance.render();
+              console.info('Watson Assistant rendered successfully');
+              // hide local fallback if visible
+              hideChatModal();
+            }else{
+              throw new Error('Watson instance missing render()');
+            }
+          }catch(err){
+            console.warn('Watson onLoad handler failed — falling back to local chat', err);
+            // keep fallback available to the user
+            showChatModal();
+          }
+        }
+      });
+
+      // load the Watson script with onerror handler
+      try{
+        const script = document.createElement('script');
+        script.src = 'https://web-chat.global.assistant.watson.appdomain.cloud/versions/' + window.watsonAssistantChatOptions.clientVersion + '/WatsonAssistantChatEntry.js';
+        script.async = true;
+        script.onload = function(){ console.info('Watson script loaded'); };
+        script.onerror = function(e){ console.warn('Watson script failed to load', e); };
+        document.head.appendChild(script);
+      }catch(e){ console.warn('Failed to append Watson script', e); }
+    })();
+
+    // Catch uncaught errors from the Watson script relating to tracking and log them (prevent crash loops)
+    window.addEventListener('error', function(ev){
+      const msg = ev && ev.message ? ev.message : '';
+      if(msg && msg.toLowerCase().includes('track')){
+        console.warn('Detected tracking-related error (suppressed):', ev.message);
+        ev.preventDefault && ev.preventDefault();
+      }
+    });
+
+  </script>
 </body>
 </html>
