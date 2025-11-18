@@ -1,2 +1,2 @@
 # KUMBAKARNA_chatbot
-this is the repository for food recommendation
+This is the repository for food recommendation
